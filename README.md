@@ -145,6 +145,6 @@ This project is licensed under the MIT License.
 ---
 
 ## Acknowledgments
-Special thanks to the developers of **LlamaParse**, **Qdrant**, **Mixtral AI**, and the Streamlit community for their amazing tools and support.
+Special thanks to the developers of **LlamaParse**, **Qdrant**, **Groq**, and the Streamlit community for their amazing tools and support.
 
 ---
