@@ -1,0 +1,12 @@
+langgraph
+numpy
+langchain-core
+langchain-chroma
+rank-bm25
+scikit-learn
+streamlit
+langchain-groq
+langchain-huggingface
+langchain-community
+langchain-text-splitters
+pymupdf
