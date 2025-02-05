@@ -1,150 +1,187 @@
-# PDF Answering Using Mixtral 📋
+# RAG based PDF-Query Assistant
 
 ## Overview
 
-This project is a **Streamlit-based application** that enables users to upload PDF documents, process them into a searchable format, and ask questions based on the content. The application leverages **LlamaParse**, **Qdrant**, and **Mixtral AI** for document parsing, vector storage, and AI-powered question-answering resp. 
+The **PDF Query Assistant** is an advanced chatbot designed to help users query and extract information from PDF documents. It leverages state-of-the-art natural language processing (NLP) techniques, including query reformulation, multi-query retrieval, and response generation, to provide precise and context-aware answers to user questions. The chatbot is built using the **LangChain** framework, integrates **LangGraph** for stateful workflow management, and uses **Groq** for language model capabilities and **Hugging Face** for text embeddings.
 
-## Key Features
-- **Upload and Parse PDF Files**: Users can upload PDFs, which are parsed into structured data for further analysis.
-- **Semantic Search**: Query the content of uploaded PDFs using natural language questions.
-- **Vector Database Integration**: Stores and manages embeddings using **Qdrant**.
-- **Scalable and Optimized**: Automatically manages collections in the vector database to ensure efficient performance.
-- **Reusable Resources**: Parsed data is cached to avoid redundant computations.
-
-## Technologies Used
-- **Streamlit**: For the user interface.
-- **Mixtral AI (Groq)**: Open-source language model for answering queries.
-- **Qdrant**: For vector storage and semantic search.
-- **LlamaParse**: For parsing PDF content into embeddings.
-- **FastEmbedEmbedding**: To generate vector embeddings for the parsed content.
+This project is ideal for users who need to interact with large PDF documents, such as research papers, manuals, or reports, and want to extract relevant information quickly and efficiently.
 
 ---
 
-## Prerequisites
-1. **Python Environment**:
-   - Python 3.8+
-   - Required libraries are listed below.
+## Features
 
-2. **Secrets and API Keys**:
-   Add the following keys to your Streamlit secrets (`.streamlit/secrets.toml`):
-   ```toml
-   LLAMAPARSE_API_KEY = "llamaparse_api_key"
-   QDRANT_API_KEY = "qdrant_api_key"
-   QDRANT_URL = "qdrant_instance_url"
-   GROQ_API_KEY = "groq_api_key"
-   ```
+1. **Query Reformulation**:
+   - Automatically reformulates user queries to make them more precise and suitable for academic/institutional search.
+   - Ensures that the reformulated query retains the original intent while improving clarity and searchability.
+
+2. **Multi-Query Retrieval**:
+   - Generates multiple query variations to enhance search comprehensiveness.
+   - Combines semantic search (using vector embeddings) and BM25-based retrieval for improved document retrieval performance.
+
+3. **Advanced Response Generation**:
+   - Uses a language model to generate context-aware responses based on retrieved documents.
+   - Includes confidence scoring to ensure the reliability of responses.
+
+4. **Stateful Workflow with LangGraph**:
+   - Utilizes **LangGraph** to create stateful workflows for managing retrieval and response generation processes.
+   - Enhances the efficiency and modularity of the RAG (Retrieval-Augmented Generation) pipeline.
+
+5. **Conversation Memory**:
+   - Maintains a memory of past interactions to provide context-aware responses.
+   - Automatically prunes older memories to stay within size limits.
+
+6. **Streamlit Web Interface**:
+   - Provides an intuitive and user-friendly interface for uploading PDFs and querying them.
+   - Supports dark mode for better readability.
+
+7. **Customizable Configuration**:
+   - Allows users to configure the number of query variations, retrieval parameters, and response generation settings.
 
 ---
 
 ## Installation
 
-1. Clone the repository and navigate to the project directory:
-   ```bash
-   git clone <repository_url>
-   cd <project_directory>
-   ```
+### Steps
 
-2. Install the required Python libraries:
-   ```bash
-   pip install streamlit nest-asyncio llama-index qdrant-client
-   ```
+1. **Set Up the Environment**:
+   - Creating a new virtual environment:
+     Windows:
+     ```bash
+     python -m venv ragenv
+     ```
+   - Activate the virtual environment:
+     ```bash
+     ragenv\Scripts\activate
+     ```
 
-3. Run the application:
-   ```bash
-   streamlit run RAG.py
-   ```
+3. **Set Up API Keys**:
+   - Create a `.env` file in the root directory and add your Groq API key:
+     ```bash
+     GROQ_API_KEY=your_groq_api_key_here
+     ```
 
----
-
-## How It Works
-
-1. **Upload PDF**:
-   - Users upload a PDF document through the Streamlit interface.
-
-2. **Parsing**:
-   - The PDF is parsed into structured data using **LlamaParse**. Parsed data is cached locally using a hash-based system to prevent redundant processing.
-
-3. **Vector Storage**:
-   - Embeddings are generated using **FastEmbedEmbedding** and stored in a Qdrant collection. 
-   - The application automatically manages Qdrant collections, ensuring no more than a specified maximum number of collections exist.
-
-4. **Querying**:
-   - Users can ask natural language questions based on the uploaded PDF content.
-   - The question is processed using **Mixtral AI**, which queries the vector database to retrieve relevant answers.
-
----
-
-## Key Functionalities
-
-### 1. PDF Parsing and Storage
-- Parses PDF documents into a structured format (Markdown).
-- Caches parsed data locally for reusability.
-
-### 2. Vector Database Management
-- Uses Qdrant to store embeddings.
-- Automatically creates and manages collections, removing the oldest collections when the limit is exceeded.
-
-### 3. Semantic Search
-- Provides a natural language search interface powered by Mixtral AI.
-- Queries the vector database for relevant answers based on the uploaded document.
+4. **Run the Application**:
+   - Start the Streamlit app:
+     ```bash
+     streamlit run app.py
+     ```
 
 ---
 
 ## Usage
 
 1. **Upload a PDF**:
-   - Drag and drop a PDF into the file uploader.
+   - Use the sidebar to upload a PDF document. The chatbot will process the document and prepare it for querying.
 
-2. **Ask Questions**:
-   - Enter a natural language question in the input box.
-   - Click the **Search** button to retrieve answers based on the document.
+2. **Enter a Query**:
+   - Type your question in the query input box. The chatbot will reformulate your query and retrieve relevant information from the document.
 
----
+3. **View Results**:
+   - The chatbot will display the reformulated query and provide a response based on the retrieved information.
+   - If the chatbot is unsure about the answer, it will prompt you to connect with a live agent.
 
-## Customization
-
-### Embedding Model
-- The code currently uses **FastEmbedEmbedding** with the model `BAAI/bge-base-en-v1.5`.
-- You can switch to other embedding models by modifying:
-  ```python
-  embed_model = FastEmbedEmbedding(model_name="your_model_name")
-  ```
-
-### LLM Model
-- The code uses **Mixtral AI (Groq)**.
-- You can replace it with another model by updating:
-  ```python
-  llm = Groq(model="model_name", api_key=GROQ_API_KEY)
-  ```
-
-### Qdrant Collection Limit
-- Adjust the maximum number of collections by modifying:
-  ```python
-  manage_qdrant_collections(client, max_collections=5)
-  ```
+4. **Conversation History**:
+   - The chatbot maintains a history of your queries and responses, allowing for context-aware interactions.
 
 ---
 
-## Limitations
-- **Dependency on API Keys**: Ensure that valid API keys are provided for LlamaParse, Qdrant, and Groq services.
-- **PDF Content Quality**: Performance may vary based on the complexity and quality of the uploaded PDF content.
-- **Resource Intensity**: Handling large documents or queries may be computationally intensive.
+## Code Structure
+
+The project is organized into the following modules:
+
+1. **`query_processor.py`**:
+   - Contains the `AdvancedQueryProcessor` class, which handles query reformulation and generation of query variations.
+
+2. **`query_retriever.py`**:
+   - Implements the `MultiQueryRetriever` class, which combines semantic search and BM25-based retrieval for document retrieval.
+
+3. **`memories.py`**:
+   - Manages conversation memory using a vector store. Includes methods for adding, retrieving, and pruning memories.
+
+4. **`chatbot.py`**:
+   - Defines the `AdvancedQAChatbot` class, which integrates query processing, retrieval, and response generation.
+   - Uses **LangGraph** to create stateful workflows for managing the RAG pipeline.
+
+5. **`app.py`**:
+   - The main Streamlit application that provides the user interface for interacting with the chatbot.
 
 ---
 
-## Future Improvements
-- Add support for multi-file uploads and batch processing.
-- Include more advanced query analytics.
-- Integrate additional vector storage options.
+## Key Libraries and Their Roles
+
+1. **LangChain**:
+   - Provides the core framework for building language model applications.
+   - Used for query reformulation, retrieval, and response generation.
+
+2. **LangGraph**:
+   - Manages stateful workflows within the RAG pipeline.
+   - Enhances the modularity and efficiency of the retrieval and response generation processes.
+
+3. **Groq**:
+   - Powers the language model for generating responses and reformulating queries.
+
+4. **Hugging Face**:
+   - Provides text embeddings for semantic search and document retrieval.
+
+5. **Chroma**:
+   - Acts as the vector store for storing and retrieving document embeddings.
+
+6. **PyMuPDF**:
+   - Used for loading and processing PDF documents.
+
+7. **Streamlit**:
+   - Provides the web interface for interacting with the chatbot.
+
+---
+
+## Configuration
+
+The chatbot can be customized using the following parameters:
+
+- **Number of Query Variations**: Adjust the number of query variations generated for each query.
+- **Retrieval Parameters**: Configure the number of documents to retrieve (`k`) and the balance between relevance and diversity (`lambda_mult`).
+- **Confidence Threshold**: Set the minimum confidence score required for a response to be considered valid.
+
+---
+
+## Dependencies
+
+The project relies on the following Python libraries:
+
+- **LangChain**: Framework for building language model applications.
+- **LangGraph**: For stateful workflow management.
+- **Streamlit**: For building the web interface.
+- **Groq**: For language model capabilities.
+- **Hugging Face**: For text embeddings.
+- **Chroma**: Vector store for document retrieval.
+- **PyMuPDF**: For loading and processing PDF documents.
+
+---
+
+## Contributing
+
+Contributions are welcome! If you'd like to contribute to this project, please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Submit a pull request with a detailed description of your changes.
 
 ---
 
 ## License
-This project is licensed under the MIT License.
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
 ## Acknowledgments
-Special thanks to the developers of **LlamaParse**, **Qdrant**, **Groq**, and the Streamlit community for their amazing tools and support.
+
+- **LangChain** for providing the framework for building language model applications.
+- **LangGraph** for enabling stateful workflow management.
+- **Groq** for their powerful language models.
+- **Hugging Face** for their open-source text embeddings.
+- **Streamlit** for making it easy to build interactive web applications.
 
 ---
+
+Enjoy using the **PDF Query Assistant**! 🚀
