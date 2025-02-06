@@ -1,4 +1,4 @@
-# RAG based PDF-Query Assistant
+# Advanced RAG Chatbot
 
 ## Overview
 
